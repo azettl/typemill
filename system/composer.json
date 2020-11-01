@@ -1,9 +1,0 @@
-{
-    "require": {
-        "knplabs/github-api": "^2.15",
-        "php-http/guzzle6-adapter": "^2.0",
-        "vlucas/valitron": "^1.4",
-        "erusev/parsedown-extra": "^0.8.1",
-        "erusev/parsedown": "^1.7"
-    }
-}
