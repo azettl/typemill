@@ -33,6 +33,8 @@ class BlockApiController extends ContentController
 		# set structure
 		if(!$this->setStructure($draft = true)){ return $response->withJson(array('data' => false, 'errors' => $this->errors), 404); }
 		
+		$this->setHomepage($args = false);
+
 		/* set item */
 		if(!$this->setItem()){ return $response->withJson($this->errors, 404); }
 
@@ -72,7 +74,7 @@ class BlockApiController extends ContentController
 		}
 
 		# initialize parsedown extension
-		$parsedown = new ParsedownExtension();
+		$parsedown = new ParsedownExtension($this->uri->getBaseUrl());
 
 		# if content is not an array, then transform it
 		if(!is_array($pageMarkdown))
@@ -143,7 +145,7 @@ class BlockApiController extends ContentController
 		else
 		{
 			# parse markdown-content-array to content-string
-			$blockHTML = $parsedown->markup($blockArray, $relurl);
+			$blockHTML = $parsedown->markup($blockArray);
 			
 			# if it is a headline
 			if($blockMarkdown[0] == '#')
@@ -170,7 +172,7 @@ class BlockApiController extends ContentController
 		}
 		
 		# initialize parsedown extension
-		$parsedown = new ParsedownExtension();
+		$parsedown = new ParsedownExtension($this->uri->getBaseUrl());
 		
 		# if content is not an array, then transform it
 		if(!is_array($content))
@@ -195,7 +197,7 @@ class BlockApiController extends ContentController
 			}
 
 			# parse markdown-content-array to content-string
-			$content[$key]	= ['id' => $key, 'html' => $parsedown->markup($contentArray, $relurl)];
+			$content[$key]	= ['id' => $key, 'html' => $parsedown->markup($contentArray)];
 		}
 
 		# if page has a table of content
@@ -229,6 +231,8 @@ class BlockApiController extends ContentController
 		# set structure
 		if(!$this->setStructure($draft = true)){ return $response->withJson(array('data' => false, 'errors' => $this->errors), 404); }
 		
+		$this->setHomepage($args = false);
+
 		/* set item */
 		if(!$this->setItem()){ return $response->withJson($this->errors, 404); }
 
@@ -268,7 +272,7 @@ class BlockApiController extends ContentController
 		}
 
 		# initialize parsedown extension
-		$parsedown = new ParsedownExtension();
+		$parsedown = new ParsedownExtension($this->uri->getBaseUrl());
 		$parsedown->setVisualMode();
 
 		# if content is not an array, then transform it
@@ -353,7 +357,7 @@ class BlockApiController extends ContentController
 		else
 		{
 			# parse markdown-content-array to content-string
-			$blockHTML = $parsedown->markup($blockArray, $relurl);
+			$blockHTML = $parsedown->markup($blockArray);
 			
 			# if it is a headline
 			if($blockMarkdown[0] == '#')
@@ -384,6 +388,8 @@ class BlockApiController extends ContentController
 		# set structure
 		if(!$this->setStructure($draft = true)){ return $response->withJson(array('data' => false, 'errors' => $this->errors), 404); }
 		
+		$this->setHomepage($args = false);
+
 		# set item 
 		if(!$this->setItem()){ return $response->withJson($this->errors, 404); }
 
@@ -415,7 +421,7 @@ class BlockApiController extends ContentController
 		}
 
 		# initialize parsedown extension
-		$parsedown = new ParsedownExtension();
+		$parsedown = new ParsedownExtension($this->uri->getBaseUrl());
 
 		# if content is not an array, then transform it
 		if(!is_array($pageMarkdown))
@@ -490,6 +496,8 @@ class BlockApiController extends ContentController
 		# set structure
 		if(!$this->setStructure($draft = true)){ return $response->withJson(array('data' => false, 'errors' => $this->errors), 404); }
 		
+		$this->setHomepage($args = false);
+		
 		# set item
 		if(!$this->setItem()){ return $response->withJson($this->errors, 404); }
 
@@ -521,7 +529,7 @@ class BlockApiController extends ContentController
 		}
 
 		# initialize parsedown extension
-		$parsedown = new ParsedownExtension();
+		$parsedown = new ParsedownExtension($this->uri->getBaseUrl());
 
 		# if content is not an array, then transform it
 		if(!is_array($this->content))

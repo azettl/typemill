@@ -6,7 +6,7 @@ use Typemill\Models\ProcessImage;
 
 class Assets
 {
-	protected $baseUrl;
+	public $baseUrl;
 	
 	public function __construct($baseUrl)
 	{
@@ -20,6 +20,16 @@ class Assets
 		$this->svgSymbols		= array();
 		$this->imageUrl 		= false;
 		$this->imageFolder 		= 'original';
+	}
+
+	public function setUri($uri)
+	{
+		$this->uri = $uri;
+	}
+
+	public function setBaseUrl($baseUrl)
+	{
+		$this->baseUrl = $baseUrl;
 	}
 
 	public function image($url)
@@ -38,7 +48,7 @@ class Assets
 
 		$resize = '-';
 
-		if(ctype_digit($width) && $width < 10000)
+		if(is_int($width) && $width < 10000)
 		{
 			$resize .= $width;
 			$desiredSizes['custom']['width'] = $width;
@@ -46,7 +56,7 @@ class Assets
 
 		$resize .= 'x';
 
-		if(ctype_digit($height) && $height < 10000)
+		if(is_int($height) && $height < 10000)
 		{
 			$resize .= $height;
 			$desiredSizes['custom']['height'] = $height;
@@ -125,7 +135,7 @@ class Assets
 
 	public function src()
 	{
-		return $this->imageUrl;
+		return $this->baseUrl . '/' . $this->imageUrl;
 	}
 
 	public function addCSS($CSS)
@@ -151,6 +161,8 @@ class Assets
 		{
 			$this->JS[] = '<script src="' . $JSfile . '"></script>';
 		}
+
+#		print_r($this->JS);
 	}
 
 	public function addInlineJS($JS)

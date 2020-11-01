@@ -106,10 +106,11 @@ class PageController extends Controller
 		}
 
 		# if the user is on startpage
+		$home = false;
 		if(empty($args))
 		{
 			$home = true;
-			$item = Folder::getItemForUrl($navigation, $uri->getBasePath(), $uri->getBasePath());
+			$item = Folder::getItemForUrl($navigation, $uri->getBasePath(), $uri->getBaseUrl(), NULL, $home);
 			$urlRel = $uri->getBasePath();
 		}
 		else
@@ -178,7 +179,7 @@ class PageController extends Controller
 			if(isset($item->hide) && !$item->hide)
 			{
 				# use the navigation instead of the structure so that hidden elements are erased
-				$item = Folder::getItemForUrl($navigation, $urlRel, $uri->getBasePath());
+				$item = Folder::getItemForUrl($navigation, $urlRel, $uri->getBaseUrl(), NULL, $home);
 			}
 		}
 
@@ -200,21 +201,21 @@ class PageController extends Controller
 		$itemUrl 		= isset($item->urlRel) ? $item->urlRel : false;
 
 		/* initialize parsedown */
-		$parsedown 		= new ParsedownExtension($settings['headlineanchors']);
+		$parsedown 		= new ParsedownExtension($base_url, $settings['headlineanchors']);
 		
 		/* set safe mode to escape javascript and html in markdown */
 		$parsedown->setSafeMode(true);
 
 		/* parse markdown-file to content-array */
-		$contentArray 	= $parsedown->text($contentMD, $itemUrl);
+		$contentArray 	= $parsedown->text($contentMD);
 		$contentArray 	= $this->c->dispatcher->dispatch('onContentArrayLoaded', new OnContentArrayLoaded($contentArray))->getData();
 				
 		/* parse markdown-content-array to content-string */
-		$contentHTML	= $parsedown->markup($contentArray, $itemUrl);
+		$contentHTML	= $parsedown->markup($contentArray);
 		$contentHTML 	= $this->c->dispatcher->dispatch('onHtmlLoaded', new OnHtmlLoaded($contentHTML))->getData();
 		
 		/* extract the h1 headline*/
-		$contentParts	= explode("</h1>", $contentHTML);
+		$contentParts	= explode("</h1>", $contentHTML, 2);
 		$title			= isset($contentParts[0]) ? strip_tags($contentParts[0]) : $settings['title'];
 		
 		$contentHTML	= isset($contentParts[1]) ? $contentParts[1] : $contentHTML;
@@ -240,9 +241,19 @@ class PageController extends Controller
 					$img_alt = isset($img_alt_result[1]) ? $img_alt_result[1] : false;
 				}
 			}
+			elseif($logo)
+			{
+				$img_url = $logo;
+				$pathinfo = pathinfo($settings['logo']);
+				$img_alt = $pathinfo['filename'];
+			}
 		}
 		
-		$firstImage = array('img_url' => $base_url . '/' . $img_url, 'img_alt' => $img_alt);
+		$firstImage = false;
+		if($img_url)
+		{
+			$firstImage = array('img_url' => $base_url . '/' . $img_url, 'img_alt' => $img_alt);
+		}
 		
 		$route = empty($args) && isset($settings['themes'][$theme]['cover']) ? '/cover.twig' : '/index.twig';
 
